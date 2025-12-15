@@ -308,8 +308,9 @@ export default defineComponent({
       })
     },
     save(isbn) {
-      if (this.form.isbn) {
-        request.post("/LendRecord" + isbn, this.form).then(res => {
+      // 新增记录：使用POST请求
+      if (!isbn && this.form.isbn) {
+        request.post("/LendRecord", this.form).then(res => {
           console.log(res)
           if (res.code == 0) {
             ElMessage({
@@ -320,10 +321,11 @@ export default defineComponent({
             ElMessage.error(res.msg)
           }
           this.load()
-          this.dialogVisible = false
+          this.dialogVisible2 = false
         })
       }
-      else {
+      // 更新记录：使用PUT请求
+      else if (isbn) {
         request.put("/LendRecord/" + isbn, this.form).then(res => {
           console.log(res)
           if (res.code == 0) {
@@ -335,8 +337,12 @@ export default defineComponent({
             ElMessage.error(res.msg)
           }
           this.load()
-          this.dialogVisible2 = false
+          this.dialogVisible = false
         })
+      }
+      // 错误情况处理
+      else {
+        ElMessage.error('操作失败：缺少必要参数')
       }
     },
     clear() {
@@ -484,56 +490,141 @@ export default defineComponent({
 :deep(.el-form-item__label) {
   font-weight: 500;
   color: #555;
+  text-align: right;
+  padding-right: 15px;
+  vertical-align: middle;
 }
 
+:deep(.el-form--inline .el-form-item__label) {
+  text-align: right;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* 表单区域样式 */
+:deep(.el-form) {
+  background: transparent;
+}
+
+/* 输入框样式 */
 :deep(.el-input__wrapper) {
   border-radius: 12px;
   border: 1px solid #e0e0e0;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: transparent;
 }
 
 :deep(.el-input__wrapper:hover) {
   border-color: #667eea;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  background: transparent;
 }
 
 :deep(.el-input__wrapper.is-focus) {
   border-color: #667eea;
   box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  background: transparent;
+}
+
+:deep(.el-input__inner) {
+  background: transparent;
+  vertical-align: middle;
 }
 
 /* 按钮样式 */
 :deep(.el-button) {
-  border-radius: 12px;
-  font-weight: 500;
+  border-radius: 16px;
+  font-weight: 600;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 :deep(.el-button:hover) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  opacity: 0.95;
+}
+
+:deep(.el-button:active) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 :deep(.el-button--primary) {
   background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
   border: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 :deep(.el-button--danger) {
   background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  color: white;
   border: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.el-button--default) {
+  background: linear-gradient(45deg, #f0f2f5, #e4e6eb);
+  color: #333;
+  border: 1px solid #dcdfe6;
 }
 
 :deep(.el-button--primary.is-plain) {
-  border: 1px solid #667eea;
+  background: white;
+  border: 2px solid #667eea;
   color: #667eea;
+  font-weight: 600;
+}
+
+:deep(.el-button--primary.is-plain:hover) {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #536dfe;
+  color: #536dfe;
 }
 
 :deep(.el-button--danger.is-plain) {
-  border: 1px solid #ff6b6b;
+  background: white;
+  border: 2px solid #ff6b6b;
   color: #ff6b6b;
+  font-weight: 600;
+}
+
+:deep(.el-button--danger.is-plain:hover) {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: #ff5252;
+  color: #ff5252;
+}
+
+:deep(.el-button--default:hover) {
+  background: linear-gradient(45deg, #e4e6eb, #d4d6da);
+  color: #222;
+  border-color: #c0c4cc;
+}
+
+/* 对话框按钮样式 */
+:deep(.dialog-footer .el-button) {
+  min-width: 80px;
+  padding: 10px 20px;
+  font-size: 15px;
+}
+
+/* 操作列按钮样式优化 */
+.action-buttons .el-button {
+  min-width: 70px;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* 批量操作按钮样式 */
+:deep(.action-card .el-button) {
+  padding: 10px 20px;
+  font-size: 15px;
 }
 
 /* 表格样式 */
@@ -556,10 +647,12 @@ export default defineComponent({
   font-weight: 600;
   border: none;
   padding: 12px 8px;
+  text-align: center;
 }
 
 :deep(.el-table th .cell) {
   color: white;
+  text-align: center;
 }
 
 :deep(.el-table--striped .el-table__body tr.el-table__row--striped td) {
@@ -574,13 +667,20 @@ export default defineComponent({
 :deep(.el-table td) {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   padding: 12px 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+:deep(.el-table td .cell) {
+  text-align: center;
+  vertical-align: middle;
 }
 
 /* 状态标签样式 */
 :deep(.el-tag) {
   border-radius: 20px;
   font-weight: 500;
-  padding: 6px 12px;
+  padding: 2px 12px;
 }
 
 :deep(.el-tag--warning) {
@@ -686,12 +786,35 @@ export default defineComponent({
 :deep(.el-radio-group) {
   display: flex;
   gap: 20px;
+  align-items: center;
+  justify-content: center;
 }
 
 :deep(.el-radio) {
   display: flex;
   align-items: center;
   gap: 8px;
+  vertical-align: middle;
+}
+
+:deep(.el-radio__label) {
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+/* 对话框表单样式 */
+:deep(.el-dialog .el-form-item__label) {
+  text-align: right;
+  padding-right: 15px;
+  vertical-align: middle;
+}
+
+:deep(.el-dialog .el-form-item__content) {
+  vertical-align: middle;
+}
+
+:deep(.el-dialog .el-date-editor) {
+  vertical-align: middle;
 }
 
 /* 日期选择器样式 */

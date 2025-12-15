@@ -1,45 +1,49 @@
 <template>
-  <div class="home" style ="padding: 10px">
+  <div class="home" style="padding: 10px">
     <!-- 搜索-->
     <div style="margin: 10px 0;">
 
-      <el-form inline="true" size="small" >
-        <el-form-item label="图书编号" >
-          <el-input v-model="search1" placeholder="请输入图书编号"  clearable>
-            <template #prefix><el-icon class="el-input__icon"><search/></el-icon></template>
+      <el-form inline="true" size="small">
+        <el-form-item label="图书编号">
+          <el-input v-model="search1" placeholder="请输入图书编号" clearable>
+            <template #prefix><el-icon class="el-input__icon">
+                <search />
+              </el-icon></template>
           </el-input>
-        </el-form-item >
-        <el-form-item label="图书名称" >
-          <el-input v-model="search2" placeholder="请输入图书名称"  clearable>
-            <template #prefix><el-icon class="el-input__icon"><search /></el-icon></template>
+        </el-form-item>
+        <el-form-item label="图书名称">
+          <el-input v-model="search2" placeholder="请输入图书名称" clearable>
+            <template #prefix><el-icon class="el-input__icon">
+                <search />
+              </el-icon></template>
           </el-input>
-        </el-form-item >
+        </el-form-item>
         <el-form-item label="借阅者" v-if="user.role == 1">
-          <el-input v-model="search3" placeholder="请输入借阅者昵称"  clearable>
-            <template #prefix><el-icon class="el-input__icon"><search /></el-icon></template>
+          <el-input v-model="search3" placeholder="请输入借阅者昵称" clearable>
+            <template #prefix><el-icon class="el-input__icon">
+                <search />
+              </el-icon></template>
           </el-input>
-        </el-form-item >
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" style="margin-left: 1%" @click="load" size="mini">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button size="mini"  type="danger" @click="clear">重置</el-button>
+          <el-button size="mini" type="danger" @click="clear">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
     <!-- 按钮-->
-    <div style="margin: 10px 0;" >
+    <div style="margin: 10px 0;">
       <el-popconfirm title="确认归还?" @confirm="deleteBatch" v-if="user.role == 1">
         <template #reference>
-          <el-button type="danger" size="mini" >批量归还</el-button>
+          <el-button type="danger" size="mini">批量归还</el-button>
         </template>
       </el-popconfirm>
     </div>
     <!-- 数据字段-->
     <el-table :data="tableData" stripe border="true" @selection-change="handleSelectionChange">
-      <el-table-column v-if="user.role ==1"
-          type="selection"
-          width="55">
+      <el-table-column v-if="user.role == 1" type="selection" width="55">
       </el-table-column>
       <el-table-column prop="isbn" label="图书编号" sortable />
       <el-table-column prop="bookName" label="图书名称" />
@@ -47,17 +51,18 @@
       <el-table-column prop="lendtime" label="借阅时间" />
       <el-table-column prop="deadtime" label="最迟归还日期" />
       <el-table-column prop="prolong" label="可续借次数" />
-      <el-table-column fixed="right" label="操作" >
+      <el-table-column fixed="right" label="操作">
         <template v-slot="scope">
-          <el-button  size="mini" @click ="handleEdit(scope.row)" v-if="user.role == 1">修改</el-button>
-          <el-popconfirm title="确认归还?" @confirm="handleDelete(scope.row) " v-if="user.role == 1">
+          <el-button size="mini" @click="handleEdit(scope.row)" v-if="user.role == 1">修改</el-button>
+          <el-popconfirm title="确认归还?" @confirm="handleDelete(scope.row)" v-if="user.role == 1">
             <template #reference>
-              <el-button type="danger" size="mini" >归还</el-button>
+              <el-button type="danger" size="mini">归还</el-button>
             </template>
           </el-popconfirm>
-          <el-popconfirm title="确认续借(续借一次延长30天)?" @confirm="handlereProlong(scope.row)" v-if="user.role == 2" :disabled="scope.row.prolong == 0">
+          <el-popconfirm title="确认续借(续借一次延长30天)?" @confirm="handlereProlong(scope.row)" v-if="user.role == 2"
+            :disabled="scope.row.prolong == 0">
             <template #reference>
-              <el-button type="danger" size="mini" :disabled="scope.row.prolong == 0" >续借</el-button>
+              <el-button type="danger" size="mini" :disabled="scope.row.prolong == 0">续借</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -65,15 +70,9 @@
     </el-table>
     <!--    分页-->
     <div style="margin: 10px 0">
-      <el-pagination
-          v-model:currentPage="currentPage"
-          :page-sizes="[5, 10, 20]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      >
+      <el-pagination v-model:currentPage="currentPage" :page-sizes="[5, 10, 20]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange">
       </el-pagination>
 
       <el-dialog v-model="dialogVisible2" title="修改借阅信息" width="30%">
@@ -93,10 +92,10 @@
           </el-form-item>
         </el-form>
         <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible2 = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
-      </span>
+          <span class="dialog-footer">
+            <el-button @click="dialogVisible2 = false">取 消</el-button>
+            <el-button type="primary" @click="save">确 定</el-button>
+          </span>
         </template>
       </el-dialog>
 
@@ -107,16 +106,15 @@
 <script>
 // @ is an alias to /src
 import request from "../utils/request";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import moment from "moment";
 import router from "@/router";
 export default {
-  created(){
-    let userStr = sessionStorage.getItem("user") ||"{}"
+  created() {
+    let userStr = sessionStorage.getItem("user") || "{}"
     this.user = JSON.parse(userStr)
     let userJson = sessionStorage.getItem("user")
-    if(!userJson)
-    {
+    if (!userJson) {
       router.push("/login")
     }
     this.load()
@@ -124,18 +122,35 @@ export default {
   name: 'bookwithuser',
   methods: {
 
-    handleSelectionChange(val){
+    handleSelectionChange(val) {
       this.forms = val
     },
-    deleteBatch(){
+    deleteBatch() {
       if (!this.forms.length) {
         ElMessage.warning("请选择数据！")
         return
       }
-    //  一个小优化，直接发送这个数组，而不是一个一个的提交归还
-      request.post("bookwithuser/deleteRecords",this.forms).then(res =>{
-        if(res.code === '0'){
+      //  一个小优化，直接发送这个数组，而不是一个一个的提交归还
+      request.post("bookwithuser/deleteRecords", this.forms).then(res => {
+        if (res.code === '0') {
           ElMessage.success("批量归还成功")
+          // 批量更新借阅记录状态为已归还
+          const updatePromises = this.forms.map(row => {
+            const returnBookRequest = {
+              status: '1', // 设置为已归还状态
+              returnTime: new Date().toISOString().slice(0, 19).replace('T', ' '), // 设置当前时间为归还时间
+              // 只包含RequestLendRecord.java中定义的字段
+            }
+            return request.put(`/LendRecord/${row.isbn}`, returnBookRequest)
+          })
+
+          // 等待所有更新请求完成
+          Promise.all(updatePromises).then(results => {
+            console.log('批量更新借阅记录状态完成：', results)
+          }).catch(error => {
+            console.error('批量更新借阅记录状态失败：', error)
+          })
+
           this.load()
         }
         else {
@@ -143,64 +158,77 @@ export default {
         }
       })
     },
-    load(){
-      if(this.user.role == 1){
-        request.get("/bookwithuser",{
-          params:{
+    load() {
+      if (this.user.role == 1) {
+        request.get("/bookwithuser", {
+          params: {
             pageNum: this.currentPage,
             pageSize: this.pageSize,
             search1: this.search1,
             search2: this.search2,
             search3: this.search3,
           }
-        }).then(res =>{
+        }).then(res => {
           console.log(res)
           this.tableData = res.data.records
           this.total = res.data.total
         })
       }
       else {
-        request.get("/bookwithuser",{
-          params:{
+        request.get("/bookwithuser", {
+          params: {
             pageNum: this.currentPage,
             pageSize: this.pageSize,
             search1: this.search1,
             search2: this.search2,
             search3: this.user.id,
           }
-        }).then(res =>{
+        }).then(res => {
           console.log(res)
           this.tableData = res.data.records
           this.total = res.data.total
         })
       }
     },
-    clear(){
+    clear() {
       this.search1 = ""
       this.search2 = ""
       this.search3 = ""
       this.load()
     },
-    handleDelete(row){
+    handleDelete(row) {
       const form3 = JSON.parse(JSON.stringify(row))
-      request.post("bookwithuser/deleteRecord",form3).then(res =>{
+      // 1. 执行书籍归还操作
+      request.post("bookwithuser/deleteRecord", form3).then(res => {
         console.log(res)
-        if(res.code == 0 ){
+        if (res.code == 0) {
           ElMessage.success("归还成功")
-        }
-        else
+          // 2. 同步更新借阅记录状态为已归还
+          const returnBookRequest = {
+            status: '1', // 设置为已归还状态
+            returnTime: new Date().toISOString().slice(0, 19).replace('T', ' '), // 设置当前时间为归还时间
+            // 只包含RequestLendRecord.java中定义的字段
+          }
+          // 调用借阅记录更新接口
+          request.put(`/LendRecord/${row.isbn}`, returnBookRequest).then(lendRes => {
+            console.log('借阅记录状态更新：', lendRes)
+          }).catch(error => {
+            console.error('更新借阅记录状态失败：', error)
+          })
+        } else {
           ElMessage.error(res.msg)
+        }
         this.load()
       })
     },
-    handlereProlong(row){
+    handlereProlong(row) {
       var nowDate = new Date(row.deadtime);
-      nowDate.setDate(nowDate.getDate()+30);
+      nowDate.setDate(nowDate.getDate() + 30);
       row.deadtime = moment(nowDate).format("yyyy-MM-DD HH:mm:ss");
-      row.prolong = row.prolong -1;
-      request.post("/bookwithuser",row).then(res =>{
+      row.prolong = row.prolong - 1;
+      request.post("/bookwithuser", row).then(res => {
         console.log(res)
-        if(res.code == 0){
+        if (res.code == 0) {
           ElMessage({
             message: '续借成功',
             type: 'success',
@@ -213,35 +241,35 @@ export default {
         this.dialogVisible2 = false
       })
     },
-    save(){
+    save() {
       //ES6语法
       //地址,但是？IP与端口？+请求参数
       // this.form?这是自动保存在form中的，虽然显示时没有使用，但是这个对象中是有它的
-        request.post("/bookwithuser",this.form).then(res =>{
-          console.log(res)
-          if(res.code == 0){
-            ElMessage({
-              message: '修改信息成功',
-              type: 'success',
-            })
-          }
-          else {
-            ElMessage.error(res.msg)
-          }
-          this.load()
-          this.dialogVisible2 = false
-        })
+      request.post("/bookwithuser", this.form).then(res => {
+        console.log(res)
+        if (res.code == 0) {
+          ElMessage({
+            message: '修改信息成功',
+            type: 'success',
+          })
+        }
+        else {
+          ElMessage.error(res.msg)
+        }
+        this.load()
+        this.dialogVisible2 = false
+      })
     },
 
-    handleEdit(row){
+    handleEdit(row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible2 = true
     },
-    handleSizeChange(pageSize){
+    handleSizeChange(pageSize) {
       this.pageSize = pageSize
       this.load()
     },
-    handleCurrentChange(pageNum){
+    handleCurrentChange(pageNum) {
       this.pageNum = pageNum
       this.load()
     },
@@ -250,19 +278,19 @@ export default {
   data() {
     return {
       form: {},
-      form2:{},
-      form3:{},
+      form2: {},
+      form3: {},
       dialogVisible: false,
       dialogVisible2: false,
-      search1:'',
-      search2:'',
-      search3:'',
-      total:10,
-      currentPage:1,
+      search1: '',
+      search2: '',
+      search3: '',
+      total: 10,
+      currentPage: 1,
       pageSize: 10,
       tableData: [],
-      user:{},
-      forms:[],
+      user: {},
+      forms: [],
     }
   },
 }

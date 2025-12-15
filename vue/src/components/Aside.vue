@@ -142,11 +142,12 @@ export default {
 /* 侧边栏容器 */
 .sidebar-container {
   width: 280px;
-  height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  background: var(--primary-gradient);
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
+  transition: all var(--transition-normal);
 }
 
 /* 背景装饰 */
@@ -167,24 +168,26 @@ export default {
 .modern-sidebar {
   border: none !important;
   background: transparent !important;
-  padding: 0 16px;
+  padding: 0 var(--spacing-md);
   position: relative;
   z-index: 1;
+  height: 100%;
+  overflow-y: auto;
 }
 
 /* Logo区域 */
 .sidebar-header {
-  padding: 32px 16px 24px;
+  padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg);
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .logo-icon {
@@ -192,6 +195,11 @@ export default {
   height: 32px;
   fill: white;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: transform var(--transition-normal);
+}
+
+.logo-icon:hover {
+  transform: scale(1.1);
 }
 
 .logo-text {
@@ -204,9 +212,9 @@ export default {
 
 /* 菜单项样式 */
 .menu-item-modern {
-  margin: 8px 0;
-  border-radius: 12px !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin: var(--spacing-sm) 0;
+  border-radius: var(--radius-md) !important;
+  transition: all var(--transition-normal);
   background: rgba(255, 255, 255, 0.1) !important;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -215,11 +223,11 @@ export default {
 .menu-item-modern:hover {
   background: rgba(255, 255, 255, 0.2) !important;
   transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .menu-item-modern.is-active {
-  background: linear-gradient(135deg, #3498db, #2980b9) !important;
+  background: linear-gradient(135deg, var(--secondary-color), #2980b9) !important;
   box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
   transform: translateX(8px);
 }
@@ -227,14 +235,14 @@ export default {
 /* 子菜单样式 */
 .submenu-modern {
   background: rgba(255, 255, 255, 0.05) !important;
-  border-radius: 12px;
-  margin: 8px 0;
+  border-radius: var(--radius-md);
+  margin: var(--spacing-sm) 0;
   backdrop-filter: blur(10px);
 }
 
 .submenu-item-modern {
-  margin: 4px 0;
-  border-radius: 8px !important;
+  margin: var(--spacing-xs) 0;
+  border-radius: var(--radius-sm) !important;
   background: transparent !important;
   padding-left: 48px !important;
 }
@@ -245,7 +253,7 @@ export default {
 
 .submenu-item-modern.is-active {
   background: rgba(231, 76, 60, 0.2) !important;
-  color: #e74c3c !important;
+  color: var(--danger-color) !important;
   font-weight: 600;
 }
 
@@ -253,16 +261,16 @@ export default {
 .menu-item-content {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   position: relative;
 }
 
 .submenu-item-content {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 0;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
 }
 
 /* 图标样式 */
@@ -270,7 +278,7 @@ export default {
   width: 20px;
   height: 20px;
   fill: currentColor;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-normal);
 }
 
 .submenu-icon {
@@ -293,65 +301,51 @@ export default {
   font-size: 15px;
   font-weight: 500;
   letter-spacing: 0.5px;
-  color: #2c3e50;
-  transition: color 0.3s ease;
+  color: white;
+  transition: color var(--transition-normal);
 }
 
 /* 选中状态的菜单文本颜色 */
 .menu-item-modern.is-active .menu-text {
-  color: #e74c3c !important;
+  color: white !important;
   font-weight: 600;
 }
 
 /* 箭头图标 */
 .arrow-icon {
   margin-left: auto;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-normal);
   font-size: 12px;
+  color: white;
 }
 
 .el-sub-menu.is-opened .arrow-icon {
   transform: rotate(90deg);
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .sidebar-container {
-    width: 240px;
-  }
-
-  .logo-text {
-    font-size: 18px;
-  }
-
-  .menu-text {
-    font-size: 14px;
-  }
-}
-
 /* 滚动条美化 */
-.sidebar-container::-webkit-scrollbar {
+.modern-sidebar::-webkit-scrollbar {
   width: 6px;
 }
 
-.sidebar-container::-webkit-scrollbar-track {
+.modern-sidebar::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
 }
 
-.sidebar-container::-webkit-scrollbar-thumb {
+.modern-sidebar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
   border-radius: 3px;
 }
 
-.sidebar-container::-webkit-scrollbar-thumb:hover {
+.modern-sidebar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
 
 /* 动画效果 */
 .menu-item-modern,
 .submenu-modern {
-  animation: slideInLeft 0.5s ease-out;
+  animation: slideInLeft var(--transition-normal);
 }
 
 @keyframes slideInLeft {
@@ -375,7 +369,38 @@ export default {
   transform: translateY(-50%);
   width: 4px;
   height: 60%;
-  background: linear-gradient(to bottom, #3498db, #2980b9);
+  background: linear-gradient(to bottom, var(--secondary-color), #2980b9);
   border-radius: 0 4px 4px 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sidebar-container {
+    width: 100%;
+    height: auto;
+  }
+
+  .logo-text {
+    font-size: 18px;
+  }
+
+  .menu-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-header {
+    padding: var(--spacing-lg) var(--spacing-sm) var(--spacing-md);
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
 }
 </style>
