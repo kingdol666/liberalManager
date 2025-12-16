@@ -390,44 +390,10 @@ export default {
       })
     },
     handlereturn(id, isbn, bn) {
-      this.form.status = "1"
-      this.form.id = id
-      request.put("/book", this.form).then(res => {
-        console.log(res)
-        if (res.code == 0) {
-          ElMessage({
-            message: '还书成功',
-            type: 'success',
-          })
-        }
-        else {
-          ElMessage.error(res.msg)
-        }
-        //
-        this.form3.isbn = isbn
-        this.form3.readerId = this.user.id
-        let endDate = moment(new Date()).format("yyyy-MM-DD HH:mm:ss")
-        this.form3.returnTime = endDate
-        this.form3.status = "1"
-        console.log(bn)
-        this.form3.borrownum = bn
-        request.put("/LendRecord1/", this.form3).then(res => {
-          console.log(res)
-          let form3 = {};
-          form3.isbn = isbn;
-          form3.bookName = name;
-          form3.nickName = this.user.username;
-          form3.id = this.user.id;
-          form3.lendtime = endDate;
-          form3.deadtime = endDate;
-          form3.prolong = 1;
-          request.post("/bookwithuser/deleteRecord", form3).then(res => {
-            console.log(res)
-            this.load()
-          })
-
-        })
-        //
+      // 普通用户还书时，提示请联系管理员还书
+      ElMessage({
+        message: '请联系管理员还书',
+        type: 'warning',
       })
     },
     handlelend(id, isbn, name, bn) {

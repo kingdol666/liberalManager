@@ -1,13 +1,23 @@
 <template>
   <div class="dashboard-container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h1 class="page-title">📊 数据仪表板</h1>
+      <p class="page-subtitle">实时监控图书馆运营数据和统计信息</p>
+    </div>
+
     <!-- 时间显示 -->
     <div id="myTimer" class="timer"></div>
-    
+
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="cards-row">
       <el-col :xs="12" :sm="12" :md="6" v-for="item in cards" :key="item.title">
-        <el-card class="stat-card fade-in">
-          <div slot="header" class="card-header">{{ item.title }}</div>
+        <el-card class="stat-card fade-in" shadow="hover">
+          <template #header>
+            <div class="card-header">
+              <span class="card-title">{{ item.title }}</span>
+            </div>
+          </template>
           <div class="card-content">
             <div class="card-icon">
               <svg class="icon" aria-hidden="true">
@@ -19,10 +29,14 @@
         </el-card>
       </el-col>
     </el-row>
-    
+
     <!-- ECharts 图表 -->
-    <el-card class="chart-card fade-in">
-      <div slot="header" class="card-header">统计图表</div>
+    <el-card class="chart-card fade-in" shadow="hover">
+      <template #header>
+        <div class="card-header">
+          <span class="card-title">📈 运营统计图表</span>
+        </div>
+      </template>
       <div id="main" class="chart-container"></div>
     </el-card>
   </div>
@@ -39,7 +53,7 @@ export default {
     return {
       cards: [
         { title: '已借阅', data: 100, icon: '#iconlend-record-pro' },
-        { title: '总访问', data: 100, icon: '#iconvisit'   },
+        { title: '总访问', data: 100, icon: '#iconvisit' },
         { title: '图书数', data: 100, icon: '#iconbook-pro' },
         { title: '用户数', data: 1000, icon: '#iconpopulation' }
       ],
@@ -67,7 +81,7 @@ export default {
 
       // 基于准备好的dom，初始化echarts实例
       var myChart = echarts.init(document.getElementById('main'))
-      
+
       // 绘制图表
       myChart.setOption({
         title: {
@@ -155,7 +169,7 @@ export default {
           }
         ]
       })
-      
+
       // 响应式调整
       window.addEventListener('resize', () => {
         myChart.resize()
@@ -181,43 +195,49 @@ export default {
 <style scoped>
 /* 仪表板容器 */
 .dashboard-container {
-  padding: var(--spacing-lg);
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }
 
 /* 时间显示 */
 .timer {
   font-weight: 550;
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-lg);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 20px;
   font-size: 14px;
+  text-align: center;
+  font-style: italic;
 }
 
 /* 卡片行 */
 .cards-row {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 20px;
 }
 
 /* 统计卡片 */
 .stat-card {
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-normal);
-  margin-bottom: var(--spacing-md);
-  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+  border: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
 }
 
 /* 卡片头部 */
 .card-header {
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: #64748b;
   text-align: center;
-  padding: var(--spacing-md);
+  padding: 16px;
 }
 
 /* 卡片内容 */
@@ -226,38 +246,49 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-lg);
+  padding: 24px;
 }
 
 /* 卡片图标 */
 .card-icon {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 16px;
 }
 
 .card-icon .icon {
   width: 60px;
   height: 60px;
-  fill: var(--primary-color);
-  transition: transform var(--transition-normal);
+  fill: #667eea;
+  transition: transform 0.3s ease;
 }
 
 .stat-card:hover .card-icon .icon {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(5deg);
 }
 
 /* 卡片数据 */
 .card-data {
   font-size: 32px;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-weight: 700;
+  color: #2d3748;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* 图表卡片 */
 .chart-card {
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-color);
-  margin-top: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: none;
+  margin-top: 20px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
 }
 
 /* 图表容器 */
@@ -269,7 +300,7 @@ export default {
 
 /* 动画效果 */
 .fade-in {
-  animation: fadeIn var(--transition-slow);
+  animation: fadeIn 0.6s ease;
 }
 
 @keyframes fadeIn {
@@ -277,56 +308,99 @@ export default {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+/* 页面标题样式 */
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #fff, #f0f8ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 10px 0 0 0;
+  font-weight: 300;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .dashboard-container {
-    padding: var(--spacing-md);
+    padding: 16px;
   }
-  
+
   .cards-row {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 16px;
   }
-  
+
   .card-data {
     font-size: 24px;
   }
-  
+
   .card-icon .icon {
     width: 50px;
     height: 50px;
   }
-  
+
   .chart-container {
     height: 300px;
+  }
+
+  .page-title {
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 480px) {
   .dashboard-container {
-    padding: var(--spacing-sm);
+    padding: 12px;
   }
-  
+
   .card-content {
-    padding: var(--spacing-md);
+    padding: 16px;
   }
-  
+
   .card-data {
     font-size: 20px;
   }
-  
+
   .card-icon .icon {
     width: 40px;
     height: 40px;
   }
-  
+
   .chart-container {
     height: 250px;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
   }
 }
 </style>

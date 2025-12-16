@@ -25,79 +25,117 @@ public class BookController {
     BookWithUserMapper bookWithUserMapper;
 
     @PostMapping
-    public Result<?> save(@RequestBody Book book){
+    public Result<?> save(@RequestBody Book book) {
         LambdaQueryWrapper<Book> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(Book::getIsbn,book.getIsbn());
+        wrapper.eq(Book::getIsbn, book.getIsbn());
         Book selectOne = BookMapper.selectOne(wrapper);
-        if (selectOne != null){
-            return Result.error("-1","图书编号已存在!");
+        if (selectOne != null) {
+            return Result.error("-1", "图书编号已存在!");
         }
         BookMapper.insert(book);
         return Result.success();
     }
+
     @PutMapping
-    public  Result<?> update(@RequestBody Book book){
+    public Result<?> update(@RequestBody Book book) {
         LambdaQueryWrapper<Book> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(Book::getIsbn,book.getIsbn()).ne(Book::getId,book.getId());
+        wrapper.eq(Book::getIsbn, book.getIsbn()).ne(Book::getId, book.getId());
         Book selectOne = BookMapper.selectOne(wrapper);
-        if (selectOne != null){
-            return Result.error("-1","图书编号已存在!");
+        if (selectOne != null) {
+            return Result.error("-1", "图书编号已存在!");
         }
         BookMapper.updateById(book);
         return Result.success();
     }
 
-    //    批量删除
+    // 批量删除
     @PostMapping("/deleteBatch")
     @Transactional
-    public  Result<?> deleteBatch(@RequestBody List<Integer> ids){
-        for (Integer id:ids){
+    public Result<?> deleteBatch(@RequestBody List<Integer> ids) {
+        for (Integer id : ids) {
             LambdaQueryWrapper<Book> wrapper = Wrappers.lambdaQuery();
-            wrapper.eq(Book::getId,id);
+            wrapper.eq(Book::getId, id);
             Book book = BookMapper.selectOne(wrapper);
             LambdaQueryWrapper<BookWithUser> wrapper1 = Wrappers.lambdaQuery();
-            wrapper1.eq(BookWithUser::getIsbn,book.getIsbn());
+            wrapper1.eq(BookWithUser::getIsbn, book.getIsbn());
             BookWithUser bookWithUser = bookWithUserMapper.selectOne(wrapper1);
-            if (bookWithUser != null){
-                return Result.error("-1","书籍在借阅中,无法下架");
+            if (bookWithUser != null) {
+                return Result.error("-1", "书籍在借阅中,无法下架");
             }
         }
         BookMapper.deleteBatchIds(ids);
         return Result.success();
     }
+
     @DeleteMapping("/{id}")
     @Transactional
-    public Result<?> delete(@PathVariable Long id){
+    public Result<?> delete(@PathVariable Long id) {
         LambdaQueryWrapper<Book> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(Book::getId,id);
+        wrapper.eq(Book::getId, id);
         Book book = BookMapper.selectOne(wrapper);
         LambdaQueryWrapper<BookWithUser> wrapper1 = Wrappers.lambdaQuery();
-        wrapper1.eq(BookWithUser::getIsbn,book.getIsbn());
+        wrapper1.eq(BookWithUser::getIsbn, book.getIsbn());
         BookWithUser bookWithUser = bookWithUserMapper.selectOne(wrapper1);
-        if (bookWithUser != null){
-            return Result.error("-1","书籍在借阅中,无法下架");
+        if (bookWithUser != null) {
+            return Result.error("-1", "书籍在借阅中,无法下架");
         }
         BookMapper.deleteById(id);
         return Result.success();
     }
+
     @GetMapping
     public Result<?> findPage(@RequestParam(defaultValue = "1") Integer pageNum,
-                              @RequestParam(defaultValue = "10") Integer pageSize,
-                              @RequestParam(defaultValue = "") String search1,
-                              @RequestParam(defaultValue = "") String search2,
-                              @RequestParam(defaultValue = "") String search3){
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String search1,
+            @RequestParam(defaultValue = "") String search2,
+            @RequestParam(defaultValue = "") String search3) {
         LambdaQueryWrapper<Book> wrappers = Wrappers.lambdaQuery();
-        if(StringUtils.isNotBlank(search1)){
-            wrappers.like(Book::getIsbn,search1);
+        if (StringUtils.isNotBlank(search1)) {
+            wrappers.like(Book::getIsbn, search1);
         }
-        if(StringUtils.isNotBlank(search2)){
-            wrappers.like(Book::getName,search2);
+        if (StringUtils.isNotBlank(search2)) {
+            wrappers.like(Book::getName, search2);
         }
-        if(StringUtils.isNotBlank(search3)){
-            wrappers.like(Book::getAuthor,search3);
+        if (StringUtils.isNotBlank(search3)) {
+            wrappers.like(Book::getAuthor, search3);
         }
-        wrappers.orderByDesc(Book::getBorrownum);    //按借阅次数排序
-        Page<Book> BookPage =BookMapper.selectPage(new Page<>(pageNum,pageSize), wrappers);
+        wrappers.orderByDesc(Book::getBorrownum); // 按借阅次数排序
+        Page<Book> BookPage = BookMapper.selectPage(new Page<>(pageNum, pageSize), wrappers);
         return Result.success(BookPage);
+    }
+
+    /**
+     * 根据ISBN更新图书状态
+     * 
+     * @param isbn   图书ISBN
+     * @param status 图书状态：0-已借阅，1-未借阅
+     * @return 更新结果
+     */
+    @PutMapping("/status")
+    public Result<?> updateStatusByIsbn(@RequestParam String isbn, @RequestParam String status) {
+        // 验证参数
+        if (StringUtils.isBlank(isbn) || StringUtils.isBlank(status)) {
+            return Result.error("-1", "ISBN和状态不能为空");
+        }
+
+        // 验证状态值是否合法
+        if (!"0".equals(status) && !"1".equals(status)) {
+            return Result.error("-1", "状态值不合法，只能是0或1");
+        }
+
+        // 根据ISBN查询图书
+        LambdaQueryWrapper<Book> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(Book::getIsbn, isbn);
+        Book book = BookMapper.selectOne(wrapper);
+
+        if (book == null) {
+            return Result.error("-1", "图书不存在");
+        }
+
+        // 更新状态
+        book.setStatus(status);
+        BookMapper.updateById(book);
+
+        return Result.success();
     }
 }
